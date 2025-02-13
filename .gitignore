@@ -1,0 +1,24 @@
+# Fichiers Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__
+
+# Environnement virtuel
+venv/
+env/
+
+# Fichiers Django
+*.log
+*.pot
+*.pyc
+
+# Fichiers IDE
+.vscode/
+.idea/
+
+# Base de données SQLite (si utilisée)
+db.sqlite3
+
+# Fichiers de configuration
+*.env
