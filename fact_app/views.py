@@ -132,3 +132,24 @@ class AddCustomerView(View):
 
 
 
+
+
+
+
+class AddInvoiceView(View):
+    """ add new invoice view """
+
+    template_name = 'add_invoice.html'
+
+    customers = Customer.objects.select_related('save_by').all()
+
+    context= {
+        'customers' : customers
+    }
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, self.context)
+
+    def post(self, request, *args, **kwargs):
+        return render(request, self.template_name, self.context)
+
