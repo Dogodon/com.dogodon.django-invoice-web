@@ -26,10 +26,10 @@ from django.conf.urls.i18n import i18n_patterns
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path('', include('fact_app.urls')),  # Ajoute cette ligne
 ]
-urlpatterns += i18n_patterns(
-    path('', include('fact_app.urls')),
-)
+
+
 
 
 
@@ -37,3 +37,22 @@ urlpatterns += i18n_patterns(
 if settings.DEBUG:
     urlpatterns+=static(settings.MEDIA_URL,
     document_root=settings.MEDIA_ROOT)
+
+
+
+# from django.contrib import admin
+# from django.urls import path, include
+# from django.conf import settings
+# from django.conf.urls.i18n import i18n_patterns
+
+# # urlpatterns = [
+# #     path('admin/', admin.site.urls),
+# #     path('set_language/', include('fact_app.urls')),
+# # ]
+
+# # Utilisation de i18n_patterns si nécessaire mais pas dans les inclusions
+# if settings.USE_I18N:
+#     urlpatterns += i18n_patterns(
+#         # Tes URL internationales ici, par exemple :
+#         path('set_language/', include('fact_app.urls')),
+#     )

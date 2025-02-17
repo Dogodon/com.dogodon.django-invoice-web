@@ -50,9 +50,9 @@ class Invoice(models.Model):
     """
 
     INVOICE_TYPE = (
-        ('R', _('RECEIPT')),
-        ('P', _('PROFORMA INVOICE')),
-        ('I', _('INVOICE'))
+        ('R', _('RECU')),
+        ('P', _('PROFORMA FACTURE')),
+        ('F', _('FACTURE'))
     )
 
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
