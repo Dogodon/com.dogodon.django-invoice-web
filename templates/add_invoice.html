@@ -1,332 +1,99 @@
-
-
-<!-- 
-<script type="text/javascript">
-    $(document).ready(function () {
-        // Ajout d'un nouvel élément
-        $(document).on('click', '#btn-add', function () {
-            let number = $('#wrapper').children('.item-row').length + 1;
-            let formAdd = `
-                <div class="form-row item-row">
-                    <div class="form-group col-md-4">
-                        <label for="article-${number}">#${number} Item name</label>
-                        <input required name="article[]" type="text" class="form-control" id="article-${number}">
-                    </div>
-                    <div class="form-group col-md-2">
-                        <label for="qty-${number}">Quantity</label>
-                        <input required name="qty[]" type="number" min="1" step="0.1" class="form-control qty" id="qty-${number}">
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label for="unit-${number}">Unit Price</label>
-                        <input required name="unit[]" type="number" min="1" step="0.1" class="form-control unit" id="unit-${number}">
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label for="total-a-${number}">Total</label>
-                        <input required name="total-a[]" type="number" min="1" step="0.1" readonly class="form-control total-a" id="total-a-${number}">
-                    </div>
-                </div>`;
-            $("#wrapper").append(formAdd);
-
-            updateTotal(); // Mise à jour du total après ajout
-        });
-
-        // Suppression du dernier élément
-        $(document).on('click', '#btn-remove', function () {
-            let lastItem = $("#wrapper").children('.item-row').last();
-            if (lastItem.length) {
-                let lastTotal = parseFloat(lastItem.find('.total-a').val()) || 0;
-                lastItem.remove();
-                
-                // Réduction du total global
-                let total = parseFloat($('#total').val()) || 0;
-                total -= lastTotal;
-                $('#total').val(total.toFixed(2));
-            }
-        });
-
-        // Mise à jour du total lorsqu'un utilisateur modifie quantité/prix unitaire
-        $(document).on('input', '.qty, .unit', function () {
-            updateTotal();
-        });
-
-        function updateTotal() {
-            let total = 0;
-            $('.item-row').each(function () {
-                let qty = parseFloat($(this).find('.qty').val()) || 0;
-                let unit = parseFloat($(this).find('.unit').val()) || 0;
-                let lineTotal = qty * unit;
-                $(this).find('.total-a').val(lineTotal.toFixed(2));
-                total += lineTotal;
-            });
-            $('#total').val(total.toFixed(2));
-        }
-    });
-</script>
-
- -->
-
-
-
-
-
-
-
-
 {% extends "base.html" %}
+{% load i18n %}
 
 {% block content %}
- <br><br><br><br>
- 
- <h1 class="text-capitalize text-center mx-10 bg-dark text-white"> Register a new invoice </h1>
- 
- <form method="post">
- 
-     {% csrf_token %}
- 
-     <div class="form-row">
-         <div class="form-group col-md-12">
-             <label for="customer"> Customer </label>
-             <select name="customer" class="form-control" id="customer">
-                 <option> Choose the customer ... </option>
-                 {% for customer in customers %}
-                 <option value="{{customer.id}}">{{forloop.counter}}-{{customer.name}}</option>
-                 {% endfor %}
-             </select>
-         </div>
-     </div>
- 
-     <div class="form-row">
-         <div class="form-group col-md-12">
-             <label for="invoice"> Invoice Type </label>
-             <select name="invoice_type" class="form-control" id="invoice">
-                 <option> Choose the invoice type ... </option>
-                 <option value="R">RECEIPT</option>
-                 <option value="P">PROFORMA INVOICE</option>
-                 <option value="I">INVOICE</option>
-             </select>
-         </div>
-     </div>
- 
-     <div id="wrapper">
- 
-         <div class="form-row">
-             <div class="form-group col-md-4">
-                 <label for="article-1">#1 Item name </label>
-                 <input required name="article" type="text" class="form-control" id="article-1">
-             </div>
- 
-             <div class="form-group col-md-2">
-                 <label for="qty-1"> Quantity </label>
-                 <input required name="qty" type="number" min="1" step="0.1" class="form-control" id="qty-1">
-             </div>
- 
-             <div class="form-group col-md-3">
-                 <label for="unit-1"> Unit Price </label>
-                 <input required name="unit" type="number" min="1" step="0.1" onchange="handleChangeSingleArticle(this.id)" class="form-control" id="unit-1">
-             </div>
- 
-             <div class="form-group col-md-3">
-                 <label for="total-a-1"> Total </label>
-                 <input required name="total-a" type="number" min="1" step="0.1" readonly class="form-control"
-                     id="total-a-1">
-                <!-- <label>Total</label>
-                <input type="number" class="form-control total-a" id="total-a-1" readonly> -->
-             </div>
- 
-         </div>
- 
-     </div>
- 
-     <div class="form-row">
-         <div class="form-group col-md-12">
-             <label for="total"> Total </label>
-             <input value="0" type="number" step="0.1" name="total" readonly class="form-control" id="total">
-         </div>
-     </div>
- 
-     <div class="form-row">
-         <div class="form-group col-md-12">
-             <label for="comment"> Comments </label>
-             <textarea class="form-control" name="comment" id="comment" cols="30" rows="1"></textarea>
-         </div>
-     </div>
- 
-     <button type="submit" class="btn btn-primary"> Save </button>
- 
- </form>
- 
- <br><br>
- 
- <div class="row">
- 
-     <button id="btn-add" class="btn btn-outline-danger w-50 col-md-6"> Add a new item line </button>
-     <button id="btn-remove" class="btn btn-outline-warning w-50 col-md-6"> Remove last item line </button>
- 
- </div>
- 
- <br><br><br><br>
- 
- 
- 
- <!-- <script type="text/javascript">
-    
-     // click to add new line item 
-     
-     $(document).on('click', '#btn-add', function(){
-         
-         var number = $('#wrapper').children().length + 1;
-     
-         let formAdd = `
-     
-                         <div class="form-row">
-                                 <div class="form-group col-md-4">
-                                     <label for="article-${number}">#${number} Item name </label>
-                                     <input required name="article" type="text" class="form-control" id="article-${number}">
-                                 </div>
-     
-                                 <div class="form-group col-md-2">
-                                     <label for="qty-${number}"> Quantity </label>
-                                     <input required name="qty" type="number" min="1" step="0.1"  class="form-control" id="qty-${number}">
-                                 </div>
-     
-                                 <div class="form-group col-md-3">
-                                     <label for="unit-${number}"> Unit Price </label>
-                                     <input required name="unit" type="number" min="1" step="0.1" onchange="handleChangeSingleArticle(this.id)" class="form-control" id="unit-${number}">
-                                 </div>
-     
-                                 <div class="form-group col-md-3">
-                                     <label for="total-a-${number}"> Total </label>
-                                     <input required name="total-a" type="number" min="1" step="0.1" readonly class="form-control"
-                                         id="total-a-${number}">
-                                 </div>
-     
-                             </div>
-                     `;   
-                     
-         
-         $("#wrapper:last").append(formAdd);          
-     })
-     
-     
-     // Remove last item line 
-     
-     $(document).on('click', '#btn-remove', function(){
-         $("#wrapper").children().last().remove();
-     })
- 
-     // compute defferent totals 12
- 
-     function handleChangeSingleArticle(id){
- 
-         console.log(id.toString().split('-'))
-         let articleId = id.split('-')[1];
- 
-         let idQty = `#qty-${articleId}`;
- 
-         let unitId = `#unit-${articleId}`;
- 
-         let totalIdLine = `#total-a-${articleId}`;
- 
-         let totalLine = parseFloat($(idQty).val()) * parseFloat($(unitId).val());
- 
-         $(totalIdLine).val(totalLine);
- 
-         $('#total').val(parseFloat($('#total').val()) + totalLine);
-         
-     }
- 
- // TODO This code is not completed you need to add a busness logic for changing in quantity and removving the last item line.    
-     
-     </script> -->
+<br><br><br><br>
 
+<h1 class="text-capitalize text-center mx-10 bg-dark text-white">{% trans 'Register a new invoice' %}</h1>
 
+<form method="post">
 
+    {% csrf_token %}
 
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <label for="customer"> {% trans 'Customer' %} </label>
+            <select name="customer" class="form-control" id="customer">
+                <option> {% trans 'Choose the customer ...' %} </option>
+                {% for customer in customers %}
+                <option value="{{customer.id}}">{{forloop.counter}}-{{customer.name}}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
 
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <label for="invoice"> {% trans 'Invoice Type' %} </label>
+            <select name="invoice_type" class="form-control" id="invoice">
+                <option> {% trans 'Choose the invoice type ...' %} </option>
+                <option value="R">{% trans 'RECEIPT' %}</option>
+                <option value="P">{% trans 'PROFORMA INVOICE' %}</option>
+                <option value="I">{% trans 'INVOICE' %}</option>
+            </select>
+        </div>
+    </div>
 
+    <div id="wrapper">
 
-<!-- 
-<script>
-$(document).ready(function () {
-
-    // Ajouter une nouvelle ligne d'article
-    $(document).on('click', '#btn-add', function () {
-        var number = $('#wrapper').children().length + 1;
-
-        let formAdd = `
-            <div class="form-row item-row" id="row-${number}">
-                <div class="form-group col-md-4">
-                    <label for="article-${number}">#${number} Item name</label>
-                    <input required name="article" type="text" class="form-control" id="article-${number}">
-                </div>
-
-                <div class="form-group col-md-2">
-                    <label for="qty-${number}">Quantity</label>
-                    <input required name="qty" type="number" min="1" step="0.1" class="form-control qty" id="qty-${number}" data-id="${number}">
-                </div>
-
-                <div class="form-group col-md-3">
-                    <label for="unit-${number}">Unit Price</label>
-                    <input required name="unit" type="number" min="1" step="0.1" class="form-control unit" id="unit-${number}" data-id="${number}">
-                </div>
-
-                <div class="form-group col-md-3">
-                    <label for="total-a-${number}">Total</label>
-                    <input required name="total-a" type="number" min="1" step="0.1" readonly class="form-control total-a" id="total-a-${number}">
-                </div>
+        <div class="form-row">
+            <div class="form-group col-md-4">
+                <label for="article-1">#1 {% trans 'Item name' %}</label>
+                <input required name="article" type="text" class="form-control" id="article-1">
             </div>
-        `;
 
-        $("#wrapper:last").append(formAdd);
-    });
+            <div class="form-group col-md-2">
+                <label for="qty-1"> {% trans 'Quantity' %} </label>
+                <input required name="qty" type="number" min="1" step="0.1" class="form-control" id="qty-1">
+            </div>
 
-    // Supprimer la dernière ligne d'article et mettre à jour le total général
-    $(document).on('click', '#btn-remove', function () {
-        let lastRow = $("#wrapper").children().last();
-        
-        if (lastRow.length) {
-            let lastTotal = parseFloat(lastRow.find(".total-a").val()) || 0;
-            let currentTotal = parseFloat($('#total').val()) || 0;
+            <div class="form-group col-md-3">
+                <label for="unit-1"> {% trans 'Unit Price' %} </label>
+                <input required name="unit" type="number" min="1" step="0.1" onchange="handleChangeSingleArticle(this.id)" class="form-control" id="unit-1">
+            </div>
 
-            // Mettre à jour le total général
-            $('#total').val((currentTotal - lastTotal).toFixed(2));
+            <div class="form-group col-md-3">
+                <label for="total-a-1"> {% trans 'Total' %} </label>
+                <input required name="total-a" type="number" min="1" step="0.1" readonly class="form-control"
+                    id="total-a-1">
+            </div>
 
-            // Supprimer la dernière ligne
-            lastRow.remove();
-        }
-    });
+        </div>
 
-    // Mettre à jour le total d'une ligne et recalculer le total général
-    $(document).on('input', '.qty, .unit', function () {
-        let id = $(this).data('id');
-        updateLineTotal(id);
-    });
+    </div>
 
-    // Fonction pour mettre à jour le total d'une ligne et recalculer le total général
-    function updateLineTotal(id) {
-        let qty = parseFloat($(`#qty-${id}`).val()) || 0;
-        let unit = parseFloat($(`#unit-${id}`).val()) || 0;
-        let totalLine = qty * unit;
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <label for="total"> {% trans 'Total' %} </label>
+            <input value="0" type="number" step="0.1" name="total" readonly class="form-control" id="total">
+        </div>
+    </div>
 
-        $(`#total-a-${id}`).val(totalLine.toFixed(2));
+    <div class="form-row">
+        <div class="form-group col-md-12">
+            <label for="comment"> {% trans 'Comments' %} </label>
+            <textarea class="form-control" name="comment" id="comment" cols="30" rows="1"></textarea>
+        </div>
+    </div>
 
-        updateTotalGeneral();
-    }
+    <button type="submit" class="btn btn-primary"> {% trans 'Save' %} </button>
 
-    // Fonction pour recalculer le total général
-    function updateTotalGeneral() {
-        let total = 0;
-        $(".total-a").each(function () {
-            total += parseFloat($(this).val()) || 0;
-        });
+</form>
 
-        $('#total').val(total.toFixed(2));
-    }
-});
-</script> -->
+<br><br>
+
+<div class="row">
+
+    <button id="btn-add" class="btn btn-outline-danger w-50 col-md-6"> {% trans 'Add a new item line' %} </button>
+    <button id="btn-remove" class="btn btn-outline-warning w-50 col-md-6"> {% trans 'Remove last item line' %} </button>
+
+</div>
+
+<br><br><br><br>
+
 <script>
     $(document).ready(function () {
-    
+
         // Tableau pour stocker les articles
         let articles = [{
             id: 1,
@@ -334,57 +101,57 @@ $(document).ready(function () {
             unit: 0,
             total: 0
         }];
-    
+
         // Fonction pour mettre à jour le total d'une ligne et recalculer le total général
         function updateLineTotal(id) {
             // Récupère la quantité et le prix unitaire depuis le DOM
             let qty = parseFloat($(`#qty-${id}`).val()) || 0;
             let unit = parseFloat($(`#unit-${id}`).val()) || 0;
-    
+
             // Met à jour l'objet article dans le tableau
             let article = articles.find(a => a.id === id);
             article.qty = qty;
             article.unit = unit;
             article.total = qty * unit;
-    
+
             // Met à jour le champ total de la ligne
             $(`#total-a-${id}`).val(article.total.toFixed(2));
-    
+
             updateTotalGeneral(); // Recalculer le total général après mise à jour de la ligne
         }
-    
+
         // Fonction pour recalculer le total général
         function updateTotalGeneral() {
             let total = 0;
-    
+
             // Additionne les totaux de chaque article
             articles.forEach(article => {
                 total += article.total;
             });
-    
+
             console.log("Total recalculé :", total);  // Affiche le total recalculé dans la console pour débogage
             $('#total').val(total.toFixed(2));  // Met à jour le total général affiché
         }
-    
+
         // Initialiser la première ligne correctement
         function initFirstLine() {
             $("#qty-1, #unit-1").attr("data-id", "1");
-    
+
             // Ajouter un événement d'input pour mettre à jour la ligne
             $("#qty-1, #unit-1").on('input', function () {
                 updateLineTotal(1); // Met à jour le total de la ligne 1 quand un des champs est modifié
             });
-    
+
             updateTotalGeneral();
         }
-    
+
         // Exécuter immédiatement l'initialisation de la première ligne
         initFirstLine();
-    
+
         // Ajouter une nouvelle ligne d'article
         $(document).on('click', '#btn-add', function () {
             let id = articles.length + 1; // Nouvelle ID pour le nouvel article
-    
+
             // Ajouter un nouvel article au tableau
             articles.push({
                 id: id,
@@ -392,60 +159,56 @@ $(document).ready(function () {
                 unit: 0,
                 total: 0
             });
-    
+
             let formAdd = `
                 <div class="form-row item-row" id="row-${id}">
                     <div class="form-group col-md-4">
-                        <label for="article-${id}">#${id} Item name</label>
+                        <label for="article-${id}">#${id} {% trans 'Item name' %}</label>
                         <input required name="article" type="text" class="form-control" id="article-${id}">
                     </div>
-    
+
                     <div class="form-group col-md-2">
-                        <label for="qty-${id}">Quantity</label>
+                        <label for="qty-${id}">{% trans 'Quantity' %}</label>
                         <input required name="qty" type="number" min="1" step="0.1" class="form-control qty" id="qty-${id}" data-id="${id}">
                     </div>
-    
+
                     <div class="form-group col-md-3">
-                        <label for="unit-${id}">Unit Price</label>
+                        <label for="unit-${id}">{% trans 'Unit Price' %}</label>
                         <input required name="unit" type="number" min="1" step="0.1" class="form-control unit" id="unit-${id}" data-id="${id}">
                     </div>
-    
+
                     <div class="form-group col-md-3">
-                        <label for="total-a-${id}">Total</label>
+                        <label for="total-a-${id}">{% trans 'Total' %}</label>
                         <input required name="total-a" type="number" min="1" step="0.1" readonly class="form-control total-a" id="total-a-${id}">
                     </div>
                 </div>
             `;
-    
+
             $("#wrapper").append(formAdd);
-    
+
             // Ajouter les événements de mise à jour pour la nouvelle ligne
             $(`#qty-${id}, #unit-${id}`).on('input', function () {
                 updateLineTotal(id); // Met à jour le total de la nouvelle ligne
             });
-    
+
             updateTotalGeneral(); // Recalculer le total général après ajout
         });
-    
+
         // Supprimer la dernière ligne d'article et mettre à jour le total général
         $(document).on('click', '#btn-remove', function () {
             let lastArticle = articles.pop(); // Retirer le dernier article du tableau
-    
+
             if (lastArticle) {
                 let lastTotal = lastArticle.total;
                 let currentTotal = parseFloat($('#total').val()) || 0;
-    
+
                 $('#total').val((currentTotal - lastTotal).toFixed(2)); // Recalculer le total général après suppression
-    
+
                 $(`#row-${lastArticle.id}`).remove(); // Supprimer la dernière ligne d'article
             }
         });
-    
+
     });
 </script>
 
-
-    
-
 {% endblock content %}
-

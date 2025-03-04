@@ -27,6 +27,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 ###
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 
+###
+LOCALE_PATHS =(
+    os.path.join(BASE_DIR, 'locale')
+)
+
+
 
 try:
     from django.contrib.messages import constants as messages
@@ -69,6 +75,10 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    
+    ###
+    "django.middleware.locale.LocaleMiddleware",
+
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -103,13 +113,24 @@ WSGI_APPLICATION = "django_invoice.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'fact_app_db',
+        'USER': 'dogodon',
+        'PASSWORD': 'dogodon1*',
+        'HOST': 'localhost',  # ou l'adresse de ton serveur MySQL
+        'PORT': '3306',  # Port par défaut de MySQL
     }
 }
-
+# nom superuser : dogodon
+# mdp : d*
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -172,13 +193,19 @@ USE_I18N = True  # Active l'internationalisation
 USE_L10N = True  # Active la localisation
 USE_TZ = True     # Active la gestion des fuseaux horaires
 
+
+from django.utils.translation import gettext_lazy as _
 languages = [
     ('en', 'English'),
     ('fr', 'Français'),
     ('ar', 'العربية'),
+    # ('ar', 'العربية'),
 ]
 
 
 LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),  # Chemin où sont stockés les fichiers de traduction
 ]
+
+
+LOGIN_URL = 'admin:login'

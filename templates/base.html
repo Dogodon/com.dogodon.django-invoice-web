@@ -12,107 +12,87 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
   <link rel="stylesheet" href="{% static 'style.css' %}">
 
-
   <!-- JQuery -->
   <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
 
-  <title>Facture</title>
+  <title>{% trans 'Invoice' %}</title>
 </head>
 
 <body>
   {% get_available_languages as LANGUAGES %}
-
   {% get_language_info_list for LANGUAGES as languages %}
 
-  <!-- header  -->
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="{% url 'home' %}">NG-SmartFact</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-          
+  <!-- header -->
+  <header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="{% url 'home' %}">{% trans 'NG-SmartFact' %}</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav mr-auto">
-                 
-                  <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
-                      Languages
-                    </a>
-                    <div class="dropdown-menu">
-                      <a class="dropdown-item" href="#">english</a>
-                      <a class="dropdown-item" href="#">french</a>
-                      <a class="dropdown-item" href="#">arabic</a>
-                    </div>
-                  </li>
-                  
-                </ul>
-                
-              </div>
-
-
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="navbar-nav mr-auto">
-               
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
-                    More option
-                  </a>
-                  <div class="dropdown-menu">
-                    <a class="dropdown-item" href="{% url 'add-customer' %}">add customer</a>
-                    <a class="dropdown-item" href="#">add admin</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="#">statistic</a>
-                  </div>
-                </li>
-                
-              </ul>
-              
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <div class="nav-item dropdown">
+            <a class="nav-link text-dark dropdown-toggle" href="#" id="navbarDropdown" role="button"
+              data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              {% trans 'Languages' %}
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              {% for language in languages %}
+                {% if language.code == 'en' or language.code == 'fr' or language.code == 'ar' %}
+                  <a class="dropdown-item" href="/{{ language.code }}">{{ language.name_local }}</a>
+                {% endif %}
+              {% endfor %}
             </div>
-          </nav>
-    </header>
-    <div class="container">
-        <div class="wrapper">
-            <br>
-            {% for message in messages %}
-            <div class="alert {{message.tags}} alert-dismissible" role="aler">
-                <button type ="button"  class="close" data-dismiss="alert"  aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-                {{ message|safe }}
+          </div>
+        </ul>
+      </div>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+              {% trans 'More options' %}
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="{% url 'add-customer' %}">{% trans 'Add customer' %}</a>
+              <a class="dropdown-item" href="#">{% trans 'Add admin' %}</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">{% trans 'Statistics' %}</a>
             </div>
-            {% endfor %}
-        </div>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="wrapper">
+      <br>
+      {% for message in messages %}
+      <div class="alert {{ message.tags }} alert-dismissible" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        {{ message|safe }}
+      </div>
+      {% endfor %}
     </div>
-  <!-- end header  -->
- 
-
-    {% block content %}
-
-    {% endblock content %}
-
   </div>
 
+  <!-- end header -->
+
+  {% block content %}
+  {% endblock content %}
 
   <!-- footer -->
-
   <footer class="bg-light text-center text-dark" style="margin-top: 400px;">
-
-    <!-- copyright -->
-
     <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
-      NG smart invoice system © 202 copyright:
+      {% trans "© 2025 NG Smart Invoice System. All rights reserved." %}
     </div>
-
-    <!-- endcopyright -->
-
   </footer>
 
   <!-- end footer -->
-
-
-
 
   <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>

@@ -1,4 +1,5 @@
 
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
@@ -50,9 +51,9 @@ class Invoice(models.Model):
     """
 
     INVOICE_TYPE = (
-        ('R', _('RECU')),
-        ('P', _('PROFORMA FACTURE')),
-        ('F', _('FACTURE'))
+        ('R', _('RECEIPT')),
+        ('P', _('PROFORMA INVOICE')),
+        ('I', _('INVOICE'))
     )
 
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
@@ -61,7 +62,7 @@ class Invoice(models.Model):
 
     invoice_date_time = models.DateTimeField(auto_now_add=True)
 
-    total = models.DecimalField(max_digits=500, decimal_places=2)
+    total = models.DecimalField(max_digits=20, decimal_places=2)
 
     last_updated_date = models.DateTimeField(null=True, blank=True)
 
@@ -99,9 +100,9 @@ class Article(models.Model):
 
     quantity = models.IntegerField()
 
-    unit_price = models.DecimalField(max_digits=1000, decimal_places=2)
+    unit_price = models.DecimalField(max_digits=20, decimal_places=2)
 
-    total = models.DecimalField(max_digits=1000, decimal_places=2)
+    total = models.DecimalField(max_digits=20, decimal_places=2)
 
     class Meta:
         verbose_name = 'Article'

@@ -131,3 +131,19 @@ body{
     margin: .3rem 0 .3rem .3rem;
 }
 
+
+
+
+
+
+.download-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+.download-btn:hover {
+    background-color: #0056b3;
+}
